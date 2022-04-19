@@ -1,2 +1,1 @@
-# computer-vision
-CS 4670 Introduction to Computer Vision
+# CS 4670 Introduction to Computer Vision

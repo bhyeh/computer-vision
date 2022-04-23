@@ -1,5 +1,7 @@
 # CS 4670 Introduction to Computer Vision
 
+*Repo In Progress* 
+
 ## 0. Repo Content
 1. Edge Detection
 2. Harris Corner Detection & MOPS Descriptor

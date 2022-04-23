@@ -1,6 +1,6 @@
 # CS 4670 Introduction to Computer Vision
 
-*Repo In Progress* 
+*Repo uploading is in progress* 
 
 ## 0. Repo Content
 1. Edge Detection

@@ -1,9 +1,9 @@
 # CS 4670 Introduction to Computer Vision
 
-## 0. Contents
-* Edge Detection
-* Harris Corner Detection & MOPS Descriptor
-* Photometric Stereo
-* Object Recognition
+## 0. Repo Content
+1. Edge Detection
+2. Harris Corner Detection & MOPS Descriptor
+3. Photometric Stereo
+4. Object Recognition
 
 ## 1. Edge Detection

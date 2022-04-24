@@ -28,15 +28,15 @@ def convolve(img, filt):
     Parameters
     ----------
     img : ndarray
-        (m x n x ch) 
+        Image with dimension (m x n x ch) 
 
     filter : ndarray
-        (l x k) 
+        Filter with diimension (l x k) 
 
     Returns
     -------
     convolved_img : ndarray
-        (m x n x ch)
+        Convolved image with same dimension (m x n x ch)
     
     """
     # Reshape to be (m x n x c)
@@ -66,7 +66,6 @@ def convolve(img, filt):
         convolved_img = np.squeeze(convolved_img, axis=-1)
     return convolved_img
 
-### TODO 3: Create a gaussian filter of size k x k and with standard deviation sigma
 def gaussian_filter(k, sigma):
     """
     Creates gaussian (k x k) filter with standard deviation sigma

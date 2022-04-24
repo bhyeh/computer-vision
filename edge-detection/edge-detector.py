@@ -1,11 +1,20 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image
 
 
-### TODO 1: Read an Image and convert it into a floating point array with values between 0 and 1. 
-###         You can assume a color image
 def imread(filename):
+    """
+    Reads an image and converts to floating point array with values normalized between 0 and 1
+    
+    Parameters
+    ----------
+    filename : str
+
+    Returns
+    -------
+    img_mtrx : ndarray
+
+    """
     img = Image.open(filename).convert('RGB')
     img_mtrx = np.array(img)/255
     return img_mtrx
@@ -13,6 +22,23 @@ def imread(filename):
 ### TODO 2: Convolve an image (m x n x 3 or m x n) with a filter(l x k). Perform "same" filtering. 
 ###         Apply the filter to each channel if there are more than 1 channels
 def convolve(img, filt):
+    """
+    Convolves an image with a filter
+
+    Parameters
+    ----------
+    img : ndarray
+        (m x n x ch) 
+
+    filter : ndarray
+        (l x k) 
+
+    Returns
+    -------
+    convolved_img : ndarray
+        (m x n x ch)
+    
+    """
     # Reshape to be (m x n x c)
     img = img.reshape(img.shape[0],img.shape[1], -1)
     filt = filt.reshape(filt.shape[0], filt.shape[1], -1)
@@ -42,7 +68,20 @@ def convolve(img, filt):
 
 ### TODO 3: Create a gaussian filter of size k x k and with standard deviation sigma
 def gaussian_filter(k, sigma):
-    # 
+    """
+    Creates gaussian (k x k) filter with standard deviation sigma
+
+    Parameters
+    ----------
+    k : int
+
+    sigma : float
+
+    Returns
+    -------
+    kernel : ndarray
+    
+    """
     width = (k-1)/2
     interval = np.arange(-width, width+1, 1)
     # x and y
@@ -55,17 +94,19 @@ def gaussian_filter(k, sigma):
     kernel /= np.abs(kernel).sum()
     return kernel
 
-
-# ## Image gradients
-
-### TODO 4: Compute the image gradient. 
-### First convert the image to grayscale by using the formula:
-### Intensity = Y = 0.2125 R + 0.7154 G + 0.0721 B
-### Then convolve with a 5x5 Gaussian with standard deviation 1 to smooth out noise. 
-### Convolve with [[0.5, 0, -0.5]] to get the X derivative on each channel
-### convolve with [[0.5],[0],[-0.5]] to get the Y derivative on each channel
-### Return the gradient magnitude and the gradient orientation (use arctan2)
 def gradient(img):
+    """
+    Computes the gradient of image
+
+    Parameters
+    ----------
+    img : ndarray
+
+    Returns
+    -------
+    gradmag, gradori : ndarray
+
+    """
     # grayscale image
     img = (0.2125 * img[:,:,0]) + (0.7154 * img[:,:,1]) + (0.0721 * img[:,:,2])
     # gaussian convolve 
@@ -81,21 +122,50 @@ def gradient(img):
     gradori = np.arctan2(dy, dx)
     return gradmag, gradori
 
-### TODO 5: Write a function to check the distance of a set of pixels from a line parametrized by theta and c. 
-### The equation of the line is: x cos(thheta) + y sin(theta) + c = 0
-### The input x and y are arrays representing the x and y coordinates of each pixel
-### Return a boolean array that indicates True for pixels whose distance is less than the threshold
 def check_distance_from_line(x, y, theta, c, thresh):
+    """
+    Checks the distance of a point, (x, y), to the line parametrized by theta and c
+
+    Parameters
+    ----------
+    x, y : ndarray of int or float
+        Input x and y are arrays representing the x and y coordinates of each pixel
+    
+    theta, c, thresh : int or float
+        The equation of the line is: x cos(thheta) + y sin(theta) + c = 0
+
+    Returns
+    -------
+    _ : ndarray of bool
+        Boolean array indicating True for pixels whose distance is less than the threshold
+
+    """
     # line: x cos(theta) + y sin(theta) + c = 0
     # points: [x1,x2,...,xn]; [y1,y2,...,yn]
     dist_fun = lambda x, y : abs(x*np.cos(theta) + y*np.sin(theta) + c)    
     dist = dist_fun(x, y)
     return dist < thresh
 
-
-### TODO 6: Write a function to draw a set of lines on the image. The `lines` input is a list of (theta, c) pairs. Each line must appear as red on the final image
-### where every pixel which is less than thresh units away from the line should be colored red
 def draw_lines(img, lines, thresh):
+    """
+    Draws a set of lines on image
+
+    Parameters
+    ----------
+    img : ndarray 
+
+    lines : list of tuple
+        List of (theta, c) pairs
+
+    thresh : int or float
+        Value to threshold distance from pixels and lines
+
+    Returns
+    -------
+    img : ndarray
+        Image with each line within threshold appearing as red
+    
+    """
     # img dim
     img = img.reshape(img.shape[0],img.shape[1], -1)
     m, n, _, = img.shape
@@ -110,12 +180,23 @@ def draw_lines(img, lines, thresh):
     return img
 
 
-### TODO 7: Do Hough voting. You get as input the gradient magnitude and the gradient orientation, as well as a set of possible theta values and a set of possible c
-### values. If there are T entries in thetas and C entries in cs, the output should be a T x C array. Each pixel in the image should vote for (theta, c) if:
-### (a) Its gradient magnitude is greater than thresh1
-### (b) Its distance from the (theta, c) line is less than thresh2, and
-### (c) The difference between theta and the pixel's gradient orientation is less than thresh3
 def hough_voting(gradmag, gradori, thetas, cs, thresh1, thresh2, thresh3):
+    """
+    Performs Hough line voting
+
+    Parameters
+    ----------
+    gradmag, gradori : ndarray
+
+    thetas, cs : list of float
+
+    thresh1, thresh2, thresh3 : float
+
+    Returns
+    -------
+    voting_mtrx : ndarray of int
+    
+    """
     # dim
     gradmag = gradmag.reshape(gradmag.shape[0], gradmag.shape[1], -1)
     gradori = gradori.reshape(gradori.shape[0], gradori.shape[1], -1)
@@ -146,13 +227,28 @@ def hough_voting(gradmag, gradori, thetas, cs, thresh1, thresh2, thresh3):
             voting_mtrx[i,j] = votes # fill votes for (theta, c) candidate line
     return voting_mtrx
 
-
-### TODO 8: Find local maxima in the array of votes. A (theta, c) pair counts as a local maxima if 
-### (a) its votes are greater than thresh, and 
-### (b) its value is the maximum in a nbhd x nbhd neighborhood in the votes array.
-### Return a list of (theta, c) pairs
-
 def localmax(votes, thetas, cs, thresh, nbhd):
+    """
+    Finds the local maxima in array of votes in neighborhood. Counts (theta, c) pair as local maxima if:
+        (a) votes are greater than thresh, and
+        (b) value is maximum in a nbhd x nbhd neighborhood in voting array
+
+    Parameters
+    ----------
+    votes : ndarray
+
+    thetas, cs : list of float
+
+    thresh : int or float
+
+    nbhd : int
+        Describes neighborhood size (nbhd x nbhd)
+
+    Returns
+    -------
+    pairs : list of tuple (theta, c)
+    
+    """
     # theta x cs dim
     T, C = votes.shape
     rows, cols = np.indices((T,C)) # coordinates of votes
@@ -178,9 +274,21 @@ def localmax(votes, thetas, cs, thresh, nbhd):
                 pairs.append((theta, c))
     return pairs
 
-
-# Final product: Identify lines using the Hough transform    
 def do_hough_lines(filename):
+    """
+    Identifies lines using Hough transform
+
+    Parameters
+    ----------
+    filename : str
+
+    Returns
+    -------
+    result_img : float array
+
+    lines : list of tuple (theta, c)
+
+    """
 
     # Read image in
     img = imread(filename)

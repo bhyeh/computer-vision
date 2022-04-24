@@ -19,8 +19,6 @@ def imread(filename):
     img_mtrx = np.array(img)/255
     return img_mtrx
 
-### TODO 2: Convolve an image (m x n x 3 or m x n) with a filter(l x k). Perform "same" filtering. 
-###         Apply the filter to each channel if there are more than 1 channels
 def convolve(img, filt):
     """
     Convolves an image with a filter
